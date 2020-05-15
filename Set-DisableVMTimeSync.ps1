@@ -93,6 +93,28 @@ Param(
         "time.synchronize.resume.host"
     )
 
+    # When we check initially if *any* of the values are already FALSE, ask whether to continue or exit
+    $AlreadyDisabled = $False
+    ForEach ($Setting in $valuesBeforeChange) {
+        If ($Setting.value -eq "FALSE") {
+            $AlreadyDisabled = $True
+        } 
+    }
+
+    If ($AlreadyDisabled) {
+        Write-Host "One or more of the settings are already false. Would you like to continue?"
+        $ContinueOrNot = Read-Host "Press Y to continue or any other key to exit - powershell console will exit."
+
+        If ($ContinueOrNot -eq "Y") {
+            Write-Host "Continuing with the change."
+        } else {
+            Write-Host "Terminating the change."
+            Read-Host "Press ENTER to exit the script - powershell console will close."
+            Exit
+        }
+    
+    }
+
     Write-Host "`nCheck 2 : Is the VM powered on or off" -ForegroundColor Green                                                
     if ($vmpowerstatus -eq "PoweredOff") {
         Write-Host "$VM isn't powered on" -ForegroundColor Cyan
